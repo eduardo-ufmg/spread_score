@@ -19,14 +19,14 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
         factor_k (int): A scaled factor from the number of nearest neighbors used in
                         the sparse RBF kernel. This is used to adjust the spread score.
 
+    Returns:
+        float: The calculated spread score. Returns 0.0 if there are fewer
+               than two samples or if there is no variance in distances.
+
     Raises:
         TypeError: If Q or y cannot be converted to numpy arrays.
         ValueError: If Q is not a 2D array, y is not a 1D array, or if the number of samples in Q and y do not match.
         MemoryError: If the pairwise distance matrix is too large to fit in memory.
-
-    Returns:
-        float: The calculated spread score. Returns 0.0 if there are fewer
-               than two samples or if there is no variance in distances.
     """
     # --- Input Validation and Edge Cases ---
     try:

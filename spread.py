@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
-def spread(Q: np.ndarray, y: np.ndarray, h: float, k: int) -> float:
+def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> float:
     """
     Calculates a "spread" score for samples in a similarity space.
 
@@ -18,9 +18,10 @@ def spread(Q: np.ndarray, y: np.ndarray, h: float, k: int) -> float:
                         is the similarity of sample `i` to class `j`.
         y (np.ndarray): A 1D numpy array of shape (n_samples,) containing the true
                         class labels for each sample.
-        h (float): The bandwidth parameter for the RBF kernel. Used as regularization
-                   to control the smoothness of the similarity space.
-        k (int): The number of nearest neighbors to consider in the sparse RBF kernel.
+        factor_h (float): A scaled factor from the RBF kernel bandwidth parameter.
+                          This is used to adjust the spread score.
+        factor_k (int): A scaled factor from the number of nearest neighbors used in
+                        the sparse RBF kernel. This is used to adjust the spread score.
 
     Raises:
         TypeError: If Q or y cannot be converted to numpy arrays.
@@ -92,5 +93,5 @@ def spread(Q: np.ndarray, y: np.ndarray, h: float, k: int) -> float:
     avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
 
     # --- Final Score ---
-    return avg_between_dist + avg_within_dist
+    return (avg_between_dist + avg_within_dist) / (factor_h * factor_k)
 

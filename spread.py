@@ -26,7 +26,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
 
     Returns:
         float: The calculated spread score. Returns 0.0 if there are fewer
-               than two samples.
+               than two samples or if there is no variance in distances.
     """
     # --- Input Validation and Edge Cases ---
     try:
@@ -76,6 +76,8 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     # Avoid division by zero if there are no within-class pairs (e.g., every
     # sample is in its own unique class).
     avg_within_dist = within_distances.sum() / num_within_pairs if num_within_pairs > 0 else 0.0
+    # Standard deviation requires at least two samples.
+    std_within_dist = np.std(within_distances) if num_within_pairs > 1 else 0.0
 
     # --- Average Between-Class Distance ---
     # The "different class" mask is the logical inverse of the "same class" mask.
@@ -87,6 +89,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
 
     # Avoid division by zero if all samples belong to the same class.
     avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
+    std_between_dist = np.std(between_distances) if num_between_pairs > 1 else 0.0
 
-    return avg_between_dist * avg_within_dist
+    return float((avg_between_dist * avg_within_dist) / (std_between_dist * std_within_dist)) * factor_k
 

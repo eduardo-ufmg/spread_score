@@ -5,10 +5,6 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     """
     Calculates a "spread" score for samples in a similarity space.
 
-    The score is defined as:
-    spread = (average_distance_between_samples_from_different_classes) +
-             (average_distance_between_samples_from_same_class)
-
     Each row of the input matrix Q is treated as a point in an n-classes
     dimensional space, and the distances are the Euclidean distances between
     these points.
@@ -92,6 +88,5 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     # Avoid division by zero if all samples belong to the same class.
     avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
 
-    # --- Final Score ---
-    return (avg_between_dist + avg_within_dist) * (1 - factor_h) * (1 - factor_k)
+    return avg_between_dist + avg_within_dist
 

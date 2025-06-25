@@ -88,5 +88,5 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     # Avoid division by zero if all samples belong to the same class.
     avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
 
-    return avg_between_dist + avg_within_dist
+    return avg_between_dist * avg_within_dist
 

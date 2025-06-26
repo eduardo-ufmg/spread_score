@@ -91,5 +91,6 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
     std_between_dist = np.std(between_distances) if num_between_pairs > 1 else 0.0
 
-    return float((avg_between_dist * avg_within_dist) / (std_between_dist * std_within_dist)) * factor_k * factor_h
+    return float((avg_between_dist * avg_within_dist) / (std_between_dist * std_within_dist)) * factor_k * factor_h \
+        if std_within_dist > 0 and std_between_dist > 0 else 0.0
 

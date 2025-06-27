@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
+
 def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> float:
     """
     Calculates a "spread" score for samples in a similarity space.
@@ -41,7 +42,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
         raise ValueError("Input y must be a 1D array.")
     if Q.shape[0] != y.shape[0]:
         raise ValueError("The number of samples in Q and y must be the same.")
-    
+
     n_samples = Q.shape[0]
     if n_samples < 2:
         return 0.0
@@ -53,7 +54,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     try:
         # pdist computes the condensed distance matrix, squareform converts it
         # to a full symmetric matrix.
-        pairwise_dists = squareform(pdist(Q, metric='euclidean'))
+        pairwise_dists = squareform(pdist(Q, metric="euclidean"))
     except MemoryError:
         raise MemoryError(
             f"Failed to create a {n_samples}x{n_samples} pairwise distance matrix. "
@@ -62,8 +63,8 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
 
     # Create a boolean matrix where True indicates a pair of samples
     # belongs to the same class. This is done via broadcasting for efficiency.
-    is_same_class_mask = (y[:, None] == y[None, :])
-    
+    is_same_class_mask = y[:, None] == y[None, :]
+
     # Exclude the main diagonal from all calculations, as the distance
     # from a sample to itself is always zero and not meaningful here.
     np.fill_diagonal(is_same_class_mask, False)
@@ -75,7 +76,9 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
 
     # Avoid division by zero if there are no within-class pairs (e.g., every
     # sample is in its own unique class).
-    avg_within_dist = within_distances.sum() / num_within_pairs if num_within_pairs > 0 else 0.0
+    avg_within_dist = (
+        within_distances.sum() / num_within_pairs if num_within_pairs > 0 else 0.0
+    )
     # Standard deviation requires at least two samples.
     std_within_dist = np.std(within_distances) if num_within_pairs > 1 else 0.0
 
@@ -88,8 +91,15 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
     num_between_pairs = between_distances.size
 
     # Avoid division by zero if all samples belong to the same class.
-    avg_between_dist = between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
+    avg_between_dist = (
+        between_distances.sum() / num_between_pairs if num_between_pairs > 0 else 0.0
+    )
     std_between_dist = np.std(between_distances) if num_between_pairs > 1 else 0.0
 
-    return float((avg_between_dist * avg_within_dist) - (std_between_dist * std_within_dist)) * factor_k * factor_h
-
+    return (
+        float(
+            (avg_between_dist * avg_within_dist) - (std_between_dist * std_within_dist)
+        )
+        * factor_k
+        * factor_h
+    )

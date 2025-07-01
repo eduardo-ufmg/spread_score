@@ -100,6 +100,4 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: int) -> floa
         float(
             (avg_between_dist * avg_within_dist) - (std_between_dist * std_within_dist)
         )
-        * factor_k
-        * factor_h
     )

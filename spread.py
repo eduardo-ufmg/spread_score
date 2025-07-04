@@ -3,8 +3,14 @@ from scipy.spatial.distance import pdist, squareform
 
 from paramhandling.paramhandler import parcheck, get_nparrays, get_classes
 
-def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float, classes: np.ndarray | None = None
-           ) -> float:
+
+def spread(
+    Q: np.ndarray,
+    y: np.ndarray,
+    factor_h: float,
+    factor_k: float,
+    classes: np.ndarray | None = None,
+) -> float:
     """
     Calculates a "spread" score for samples in a similarity space.
 
@@ -38,7 +44,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float, class
 
     parcheck(Q, y, factor_h, factor_k, classes)
     Q, y = get_nparrays(Q, y)
-    
+
     n_samples = Q.shape[0]
 
     # --- Core Calculation ---
@@ -94,5 +100,7 @@ def spread(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float, class
     return (
         float(
             (avg_between_dist * avg_within_dist) - (std_between_dist * std_within_dist)
-        ) * (1 - factor_h) * (1 - factor_k)
+        )
+        * (1 - factor_h)
+        * (1 - factor_k)
     )
